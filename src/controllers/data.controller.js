@@ -16,6 +16,7 @@ export const getData= async (req, res) => {
     }
 }
 
+// OLD VERSION
 export const getDataAnalytics = async (req, res) => {
     try {
         const { serie, name, start, end } = req.query
@@ -28,6 +29,7 @@ export const getDataAnalytics = async (req, res) => {
     }
 }
 
+// NEW VERSION - DASHBOARD - CAMBIAR
 export const getDataAnalytics2 = async (req, res) => {
     try {
 

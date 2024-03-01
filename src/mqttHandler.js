@@ -72,7 +72,7 @@ class mqttHandler {
                     // socket.io.emit('tracking', data)
                 }
                 
-                if (topic == 'gunjop/monitor/julcani' || topic == 'gunjop/monitor/yumpag') {
+                if (topic == 'gunjop/monitor/julcani' || topic == 'gunjop/monitor/yumpag' || topic == 'gunjop/monitor/huaron' ) {
                     // data debe hacer match con lista de controllers
                     const controller = await Controller.findOne({ serie: data.serie }).populate('mining')
                     if (!controller) return
