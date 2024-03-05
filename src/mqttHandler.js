@@ -44,7 +44,7 @@ class mqttHandler {
                 }
 
                 if (topic == 'tracking/gunjop/uchucchacua') {
-                    // console.log(data)
+                    console.log(data)
                     // revisar el delay con el ultimo rgistro de la BD
                     // const lastData = await Data.findOne({ serie: data.serie }).sort({createdAt: -1})
                     // // revisar si el delay es mayor a 5 minutos
@@ -138,7 +138,7 @@ class mqttHandler {
                 }
 
                 if (topic == "gunjop/notification") {
-                    // console.log(data)
+                    console.log(data)
                     const notification = await new Notification({
                         description: data.description,
                         serie: data.serie,
