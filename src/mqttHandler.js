@@ -44,7 +44,6 @@ class mqttHandler {
                 }
 
                 if (topic == 'tracking/gunjop/uchucchacua') {
-                    console.log(data)
                     // revisar el delay con el ultimo rgistro de la BD
                     // const lastData = await Data.findOne({ serie: data.serie }).sort({createdAt: -1})
                     // // revisar si el delay es mayor a 5 minutos
@@ -75,12 +74,18 @@ class mqttHandler {
                 if (topic == 'gunjop/monitor/julcani' || topic == 'gunjop/monitor/yumpag' || topic == 'gunjop/monitor/huaron' ) {
                     // data debe hacer match con lista de controllers
                     const controller = await Controller.findOne({ serie: data.serie }).populate('mining')
+                    // console.log(controller)
                     if (!controller) return
                     const mining  = controller.mining.name
-                    socket.io.emit(`${mining.toUpperCase()}-${data.category}`, data)
+                    // update controller with data
+                    controller.devices = data.devices
+                    const dataUpdated = await Controller.findByIdAndUpdate(controller._id, controller, {new: true})
+                    // console.log(dataUpdated)
+                    socket.io.emit(`${mining.toUpperCase()}-${data.category}`, dataUpdated)
                 }
 
                 if (topic == 'gunjop/monitor/yumpag' && data.serie === 'WAPSI-4490') {
+                    //console.log(data)
                     const devicesData = data.devices.map(device => new Data({
                         serie: data.serie,
                         mining: data.mining,
@@ -98,22 +103,6 @@ class mqttHandler {
         
                     if (counter === 30) {
                         await Promise.all(devicesData.map(deviceData => deviceData.save()))
-
-                        // OPCIONAL PARA ENVIAR AL TOPIC SAVE
-                        // const CO = {
-                        //     serie: data.serie,
-                        //     mining: data.mining,
-                        //     level: data.level,
-                        //     ubication: data.ubication,
-                        //     category: data.category,
-                        //     top: data.top,
-                        //     left: data.left,
-                        //     devices: data.devices[0],
-                        //     timestamp: data.timestamp
-                        // }
-
-                        // this.client.publish('gunjop/save', JSON.stringify(CO))
-
                         counter = 0
                     }
                 }
@@ -132,13 +121,12 @@ class mqttHandler {
                         createdAt: new Date(data.timestamp),
                         datetimeServer: new Date()
                     })
-
-                    await newData.save()
-
+                    
+                    const dataSaved = await newData.save()
                 }
 
                 if (topic == "gunjop/notification") {
-                    console.log(data)
+                    // console.log(data)
                     const notification = await new Notification({
                         description: data.description,
                         serie: data.serie,
