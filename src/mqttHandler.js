@@ -6,6 +6,113 @@ import Notification from './models/Notification'
 
 require('dotenv').config()
 const socket = require('./socket').socket
+const alerts = [
+    {
+        name: 'O2',
+        alarms: [
+            {
+                limit_lower: 0,
+                limit_upper: 19.5,
+                msg: 'Peligro',
+                color: '#ff1437',
+                category: 'danger'
+            },
+            {
+                limit_lower: 19.5,
+                limit_upper: 23.5,
+                msg: 'Normal',
+                color: '#b9a50c',
+                category: 'success'
+            },
+            {
+                limit_lower: 23.5,
+                limit_upper: Infinity,
+                msg: 'Peligro',
+                color: '#ff1437',
+                category: 'danger'
+            }
+        
+        ]
+    },
+    {
+        name: 'CO',
+        alarms: [
+            {
+                limit_lower: 0,
+                limit_upper: 25,
+                msg: 'Normal',
+                color: '#0bb97d',
+                category: 'success'
+            },
+            {
+                limit_lower: 25,
+                limit_upper: 50,
+                msg: 'Advertencia',
+                color: '#b9a50c',
+                category: 'warning'
+            },
+            {
+                limit_lower: 50,
+                limit_upper: Infinity,
+                msg: 'Peligro',
+                color: '#ff1437',
+                category: 'danger'
+            }
+        ]
+    },
+    {
+        name: 'NO2',
+        alarms: [
+            {
+                limit_lower: 0,
+                limit_upper: 5,
+                msg: 'Normal',
+                color: '#0bb97d',
+                category: 'success'
+            },
+            {
+                limit_lower: 5,
+                limit_upper: 10,
+                msg: 'Advertencia',
+                color: '#b9a50c',
+                category: 'warning'
+            },
+            {
+                limit_lower: 10,
+                limit_upper: Infinity,
+                msg: 'Peligro',
+                color: '#ff1437',
+                category: 'danger'
+            }
+        ]
+    },
+    {
+        name: 'CO2',
+        alarms: [
+            {
+                limit_lower: 0,
+                limit_upper: 2.5,
+                msg: 'Normal',
+                color: '#0bb97d',
+                category: 'success'
+            },
+            {
+                limit_lower: 2.5,
+                limit_upper: 5,
+                msg: 'Advertencia',
+                color: '#b9a50c',
+                category: 'warning'
+            },
+            {
+                limit_lower: 5,
+                limit_upper: Infinity,
+                msg: 'Peligro',
+                color: '#ff1437',
+                category: 'danger'
+            }
+        ]
+    }
+]
 class mqttHandler {
     constructor() {
         this.client = {}
@@ -24,7 +131,7 @@ class mqttHandler {
             this.client.subscribe('gunjop/save', {qos: 0})
             this.client.subscribe('gunjop/notification', {qos: 0})
             this.client.subscribe('tracking/gunjop/uchucchacua', {qos: 0})
-            // this.client.subscribe('paranoid/monitor', {qos: 0})
+            this.client.subscribe('gunjop/pruebas/jorge', {qos: 0})
         })
     }
 
@@ -39,10 +146,6 @@ class mqttHandler {
         this.client.on('message', async (topic, message) => {
             try {
                 const data = JSON.parse(message.toString())
-                if (topic == 'paranoid/monitor') {
-                    // socket.io.emit(`${data.mining}-${data.category}`, data)
-                }
-
                 if (topic == 'tracking/gunjop/uchucchacua') {
                     // revisar el delay con el ultimo rgistro de la BD
                     // const lastData = await Data.findOne({ serie: data.serie }).sort({createdAt: -1})
@@ -71,17 +174,27 @@ class mqttHandler {
                     // socket.io.emit('tracking', data)
                 }
                 
-                if (topic == 'gunjop/monitor/julcani' || topic == 'gunjop/monitor/yumpag' || topic == 'gunjop/monitor/huaron' ) {
+                // if (topic == 'gunjop/monitor/julcani' || topic == 'gunjop/monitor/yumpag' || topic == 'gunjop/monitor/huaron' ) {
+                if (topic == 'gunjop/pruebas/jorge' ) {
                     // data debe hacer match con lista de controllers
                     const controller = await Controller.findOne({ serie: data.serie }).populate('mining')
-                    // console.log(controller)
                     if (!controller) return
                     const mining  = controller.mining.name
-                    // update controller with data
                     controller.devices = data.devices
                     const dataUpdated = await Controller.findByIdAndUpdate(controller._id, controller, {new: true})
+                    
                     // console.log(dataUpdated)
-                    socket.io.emit(`${mining.toUpperCase()}-${data.category}`, dataUpdated)
+                    const instruments = dataUpdated.devices.map(device => {
+                        const alarms = alerts.find(alert => alert.name.toUpperCase() === device.name.toUpperCase()).alarms
+                        const value = device.value
+                        const alarm = alarms.find(alarm => value >= alarm.limit_lower && value <= alarm.limit_upper)
+                        return {
+                            ...device,
+                            alarm
+                        }
+                    })
+                    dataUpdated.devices = instruments
+                    socket.io.emit(`${mining.toUpperCase()}-safety`, dataUpdated)
                 }
 
                 if (topic == 'gunjop/monitor/yumpag' && data.serie === 'WAPSI-4490') {
@@ -98,7 +211,7 @@ class mqttHandler {
                         createdAt: new Date(data.timestamp),
                         datetimeServer: new Date()
                     }))
-        
+
                     counter++
         
                     if (counter === 30) {

@@ -6,6 +6,7 @@ export const getUsers = async (req, res) => {
     try {
         // check hedaer token
         const users = await User.find().populate('roles')
+        console.log(users)
         // filtrar password de users
         const usersFiltered = users.map(user => {
             const { password, ...userFiltered } = user._doc
@@ -33,22 +34,19 @@ export const getUsers = async (req, res) => {
 
 export const createUser = async (req, res) => {
     try {
-        const { name, lastname, email, mobile, valid, roles} = req.body
+        const { name, lastname, dni, empresa, roles } = req.body
+
         const newUser = new User({
             name,
             lastname,
-            email,
-            password: await User.encryptPassword(mobile),
-            mobile,
-            valid,
+            dni,
+            empresa,
+            password: await User.encryptPassword(dni),
             roles
         })
-        // get id of roles
-        const rolesId = await Role.find({ name: { $in: roles } })
-        newUser.roles = rolesId.map(role => role._id)
-        
+
         const savedUser = await newUser.save()
-        res.status(200).json(savedUser)
+        res.status(200).json({status: true, savedUser})
     } catch (error) {
         console.error(error)
     }
@@ -73,7 +71,7 @@ export const updateUserById = async (req, res) => {
                 new: true
             }
         )
-        res.status(200).json(updatedUser)
+        res.status(200).json({status: true, updatedUser})
     } catch (error) {
         console.error(error)
     }

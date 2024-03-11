@@ -11,8 +11,6 @@ export const postDataRaspberry = async (req, res) => {
 
         const name = dataWapsi.devices.name
 
-        console.log(name)
-
         // const newData = new Data({
         //     serie: dataRaspberry.serie,
         //     mining: dataRaspberry.mining,

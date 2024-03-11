@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken'
 
 export const signup = async (req, res) => {
     try {
-
+        console.log(req.body)
         const { name, lastname, dni, empresa, roles } = req.body
 
         const newUser = new User({
@@ -41,6 +41,7 @@ export const signup = async (req, res) => {
 
 export const signin = async (req, res) => {
     try {
+        console.log(req.body)
         const userFound = await User.findOne({ dni: req.body.code }).populate(
             'roles'
         )

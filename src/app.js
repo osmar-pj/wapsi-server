@@ -32,6 +32,7 @@ import notificationRoutes from './routes/notification.routes'
 import advertiserRoutes from './routes/advertiser.routes'
 import utilidadRoutes from './routes/utilidad.routes'
 import offlineRoutes from './routes/offline.routes.js'
+import relationRoutes from './routes/relation.routes.js'
 
 import travelTruck from './routes/travelTruck.routes.js'
 import travelWagon from './routes/travelWagon.routes.js'
@@ -50,6 +51,7 @@ app.use(`/${process.env.API_VERSION}/notification`, notificationRoutes)
 app.use(`/${process.env.API_VERSION}/advertiser`, advertiserRoutes)
 app.use(`/${process.env.API_VERSION}/utilidad`, utilidadRoutes)
 app.use(`/${process.env.API_VERSION}/offline`, offlineRoutes)
+app.use(`/${process.env.API_VERSION}/relation`, relationRoutes)
 
 
 app.use(`/${process.env.API_VERSION}/travelTruck`, travelTruck)

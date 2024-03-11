@@ -51,7 +51,7 @@ export const createController = async (req, res) => {
             left
         })
         const controllerSaved = await newController.save()
-        res.status(201).json(controllerSaved)
+        res.status(201).json({status: true, controllerSaved})
     } catch (error) {
         console.error(error)
     }

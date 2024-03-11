@@ -14,7 +14,8 @@ const controllerSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    devices: []
+    devices: [],
+    color: String,
 }, {
     timestamps: true,
     versionKey: false

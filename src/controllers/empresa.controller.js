@@ -18,7 +18,7 @@ export const createEmpresa = async (req, res) => {
             address
         })
         const saveEmpresa = await newEmpresa.save()
-        res.status(200).json(saveEmpresa)
+        res.status(200).json({status: true, saveEmpresa})
     } catch (error) {
         console.error(error)
     }
@@ -53,7 +53,7 @@ export const deleteEmpresaById = async (req, res) => {
     try {
         const { empresaId } = req.params
         await Empresa.findByIdAndDelete(empresaId)
-        res.status(200).json()
+        res.status(200).json({status: true, message: 'Empresa deleted successfully'})
     } catch (error) {
         console.error(error)
     }
