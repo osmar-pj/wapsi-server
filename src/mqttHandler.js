@@ -249,7 +249,21 @@ class mqttHandler {
                         createdAt: new Date(data.timestamp)
                     })
 
-                    await notification.save()
+                    const compare = await Notification.findOne({
+                        serie: notification.serie,
+                        name: notification.name
+                    }).sort({ _id: -1 })
+                    
+                    if (!compare) {
+                        await notification.save()
+                    }
+                    
+                    const diff = new Date(notification.createdAt).getTime() - new Date(compare.createdAt).getTime()
+                    const convert = diff / 60000
+                    
+                    if (convert > 300) {
+                        await notification.save()
+                    }
 
                     // enviar por socket la nueva notification
                 }
