@@ -11,9 +11,10 @@ const dataSchema = new Schema({
     name: String,
     devices: {},
     timestamp: Number,
-    createdAt: Date,
+    // createdAt: Date,
     datetimeServer: Date
 }, {
+    timestamps: true,
     versionKey: false
 })
 

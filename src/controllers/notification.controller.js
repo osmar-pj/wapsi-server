@@ -3,10 +3,11 @@ import Notificacion from '../models/Notification';
 export const getNotificaciones = async (req, res) => {
     try {
         const { serie } = req.query
-        const notificaciones = await Notificacion.find({
+        const notifications = await Notificacion.find({
             serie: serie
         }).limit(5).sort({_id: -1})
-        res.status(200).json(notificaciones)
+        //console.log(notifications)
+        res.status(200).json(notifications)
     } catch (error) {
         console.error(error)
     }
@@ -14,8 +15,8 @@ export const getNotificaciones = async (req, res) => {
 
 export const getNotificacion = async (req, res) => {
     try {
-        const notificacion = await Notificacion.findById(req.params.id)
-        res.status(200).json(notificacion)
+        const notification = await Notificacion.findById(req.params.id)
+        res.status(200).json(notification)
     } catch (error) {
         console.error(error)
     }
