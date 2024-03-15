@@ -44,6 +44,17 @@ export const createUtilidad = async (req, res) => {
     }
 }
 
+export const getMonitorHuaron = async (req, res) => {
+    try {
+        console.log(req.query)
+        const data = req.body
+        client.publish('gunjop/monitor/huaron', JSON.stringify(data.data))
+        res.status(200).json({data: 'OK MONITOR'})
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 export const getDataHuaron = async (req, res) => {
     try {
             const data = req.body

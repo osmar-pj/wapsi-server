@@ -4,12 +4,12 @@ import Tracking from '../models/Tracking'
 export const getData= async (req, res) => {
     try {
         const { serie, name, start, end } = req.query
-        const data = await Data.find({ 
-            serie,
-            name,
-            createdAt: { $gte: new Date(parseInt(start)), $lte: new Date(parseInt(end)) } 
-        })
-        // const data = await Tracking.find({}).sort({ datetimeServer: -1 }).limit(10)
+        // const data = await Data.find({ 
+        //     serie,
+        //     name,
+        //     createdAt: { $gte: new Date(parseInt(start)), $lte: new Date(parseInt(end)) } 
+        // })
+        const data = await Data.find({}).sort({_id: -1}).limit(10)
         res.status(200).json(data)
     } catch (error) {
         console.error(error)

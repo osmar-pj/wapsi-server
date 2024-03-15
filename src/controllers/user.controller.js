@@ -6,7 +6,6 @@ export const getUsers = async (req, res) => {
     try {
         // check hedaer token
         const users = await User.find().populate('roles')
-        console.log(users)
         // filtrar password de users
         const usersFiltered = users.map(user => {
             const { password, ...userFiltered } = user._doc
@@ -48,7 +47,8 @@ export const createUser = async (req, res) => {
         const savedUser = await newUser.save()
         res.status(200).json({status: true, savedUser})
     } catch (error) {
-        console.error(error)
+        console.error({status: false, error})
+        res.status(500).json({status: false, error})
     }
 }
 

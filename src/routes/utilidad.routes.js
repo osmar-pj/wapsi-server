@@ -7,6 +7,7 @@ import { authJwt, verifySignup } from '../middlewares'
 
 router.get('/', utilidadCtrl.getUtilidades)
 router.post('/', utilidadCtrl.createUtilidad)
+router.get('/monitor/huaron', utilidadCtrl.getMonitorHuaron)
 router.post('/monitor/huaron', utilidadCtrl.getDataHuaron)
 router.post('/save/huaron', utilidadCtrl.saveDataHuaron)
 router.post('/notification/huaron', utilidadCtrl.saveNotificationHuaron)

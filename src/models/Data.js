@@ -1,9 +1,8 @@
-const mongoose = require('mongoose')
+import { Schema, model } from 'mongoose'
 
-const Schema = mongoose.Schema
-const dataSchema = new Schema({
+const data = new Schema({
     // depende de model Controller
-    serie: String,
+    serie: String, // controller
     mining: String,
     level: String,
     ubication: String,
@@ -18,4 +17,4 @@ const dataSchema = new Schema({
     versionKey: false
 })
 
-module.exports = mongoose.model('Data', dataSchema)
+export default model('Data', data)
